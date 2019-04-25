@@ -9,7 +9,7 @@ Instruction based on bitcoingreen
     * rpcport **17100**
 2. Start Generic script 
     ```
-    wget https://raw.githubusercontent.com/CryptoCatOkiOKi/OtherScripts/master/generic_mn_setup.sh -O generic_mn_setup.sh && chmod 755 generic_mn_setup.sh && ./generic_mn_setup.sh
+    wget https://raw.githubusercontent.com/CryptoCatOkiOKi/GenericMultipleMNInstallerScript/master/generic_mn_setup.sh -O generic_mn_setup.sh && chmod 755 generic_mn_setup.sh && ./generic_mn_setup.sh
     ```
 3. Enter coin name: 
    * type bitcoingreen (coin name must be name of blockchain folder without alias)
