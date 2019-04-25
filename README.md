@@ -15,7 +15,7 @@
 4. How many nodes do you want to create on this server?
    * type e.g. **10** if you want to install 10 additional nodes
 5. Enter the starting number:
-    * type e.g. **2**, means your nodes alias names will be mn2, mn3,... mn11 (not **1** because mn1 is already installed)
+    * type e.g. **2**, means your nodes alias names will be mn2, mn3,... mn11 (do not type **1** in this example because mn1 is already installed)
 6. Enter starting port:
     * type **16101** (if is already used then port will be set to the next one available)
 7. Enter starting RPC port:
