@@ -1,6 +1,4 @@
-# OtherScripts
-
-## Generic MasterNode Script for installing multiple nodes with one script run**
+# Generic MasterNode Script for installing multiple nodes with one script run**
 
 Instruction based on bitcoingreen
 1. Install one node with offical script. This node will be used for copying blockchain to all others nodes
