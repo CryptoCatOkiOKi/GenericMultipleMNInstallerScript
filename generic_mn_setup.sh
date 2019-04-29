@@ -58,8 +58,13 @@ done
 while ! [[ $STARTNUMBER =~ $re ]] ; do
    echo ""
    echo -e "${YELLOW}Enter the starting number: (e.g. 1 -> nodes will start with alias mn1, mn2,...)${NC}"
+   echo -e "${YELLOW} (If you leave empty and just press ENTER starting number will be set to 1)${NC}"
    read STARTNUMBER  
 done
+
+if [ -z "$STARTNUMBER" ]; then
+   STARTNUMBER=1
+fi
 
 while ! [[ $PORT =~ $re ]] ; do
    echo ""
@@ -84,15 +89,55 @@ fi
 echo ""
 ALIASONE=""
 echo -e "${YELLOW}Enter blockchain wallet alias for copying chain to new wallets: (e.g. mn0 or mn1)${NC}"
+echo -e "${YELLOW} (Leave empty and just press ENTER if there is no alias or you don't know the alias)${NC}"
 read ALIASONE
 
-# check ALIASONE
-CONF_DIR_ONE=~/.${NAME}_$ALIASONE
-echo "CONF_DIR_ONE=$CONF_DIR_ONE"
-CONF_DIR_ONE_TMP=~/"${NAME}_${ALIASONE}_tmp"
-echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"
+# check CONF DIRS
+if [ -z "$ALIASONE" ]; then
+   for DIR in ls -ad -- ~/.*${NAME}*/; do
+      if [ -d "$DIR" ]; then
+         echo "$DIR exists"
+         CONF_DIR_ONE=${DIR}
+         echo "CONF_DIR_ONE=$CONF_DIR_ONE"
+         CONF_DIR_ONE_TMP="${DIR}_tmp"
+         echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"    
+         break  
+      fi
+   done
+else
+   for DIR in ls -ad -- ~/.*${NAME}_${ALIASONE}*/; do
+      if [ -d "$DIR" ]; then
+         echo "$DIR exists"
+         CONF_DIR_ONE=${DIR}
+         echo "CONF_DIR_ONE=$CONF_DIR_ONE"
+         CONF_DIR_ONE_TMP="${DIR}_tmp"
+         echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"    
+         break  
+      fi
+   done   
+fi
 
-PID=`ps -ef | grep -i $ALIASONE | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+if [ -z "$CONF_DIR_ONE_TMP" ]; then
+   echo -e "${RED}CONF_DIR_ONE_TMP is null!${NC}"
+   exit 1
+fi
+
+# check ALIASONE
+#CONF_DIR_ONE=~/.${NAME}_$ALIASONE
+#echo "CONF_DIR_ONE=$CONF_DIR_ONE"
+#CONF_DIR_ONE_TMP=~/"${NAME}_${ALIASONE}_tmp"
+#echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"
+
+
+#create ${NAME}-cli and ${NAME}d scripts to stop and start wallet
+ALIASONE="XXX99"
+echo '#!/bin/bash' > ~/bin/${NAME}d_$ALIASONE.sh
+echo "${NAME}d -daemon -conf=$CONF_DIR_ONE/${NAME}.conf -datadir=$CONF_DIR_ONE "'$*' >> ~/bin/${NAME}d_$ALIASONE.sh
+echo '#!/bin/bash' > ~/bin/${NAME}-cli_$ALIASONE.sh
+echo "${NAME}-cli -conf=$CONF_DIR_ONE/${NAME}.conf -datadir=$CONF_DIR_ONE "'$*' >> ~/bin/${NAME}-cli_$ALIASONE.sh
+chmod 755 ~/bin/${NAME}*.sh
+
+PID=`ps -ef | grep -i $CONF_DIR_ONE_TMP | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
 
 if [ -z "$PID" ]; then
    echo ""
@@ -202,7 +247,8 @@ do
    # Create scripts
    echo '#!/bin/bash' > ~/bin/${NAME}d_$ALIAS.sh
    echo "${NAME}d -daemon -conf=$CONF_DIR/${NAME}.conf -datadir=$CONF_DIR "'$*' >> ~/bin/${NAME}d_$ALIAS.sh
-   echo "${NAME}-cli -conf=$CONF_DIR/${NAME}.conf -datadir=$CONF_DIR "'$*' > ~/bin/${NAME}-cli_$ALIAS.sh
+   echo '#!/bin/bash' > ~/bin/${NAME}-cli_$ALIAS.sh
+   echo "${NAME}-cli -conf=$CONF_DIR/${NAME}.conf -datadir=$CONF_DIR "'$*' >> ~/bin/${NAME}-cli_$ALIAS.sh
    chmod 755 ~/bin/${NAME}*.sh
 
    mkdir -p $CONF_DIR
@@ -234,7 +280,7 @@ do
  
    # generate private key for MN
    if [ -z "$PRIVKEY" ]; then
-	   PID=`ps -ef | grep -i $ALIASONE | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+	   PID=`ps -ef | grep -i $CONF_DIR_ONE_TMP | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
 	
 	   if [ -z "$PID" ]; then
          # start wallet
