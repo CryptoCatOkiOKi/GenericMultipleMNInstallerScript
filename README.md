@@ -28,5 +28,5 @@
 7. Enter starting RPC port:
    * type **17101** (if is already used then rpc port will be set to the next one available)
    
-8. Enter blockchain wallet alias for copying chain to new wallets
+8. Enter blockchain wallet alias for copying chain to new wallets (if there is no alias leave empty)
     * type **mn1** as we named the first node!
