@@ -60,6 +60,10 @@ while ! [[ $STARTNUMBER =~ $re ]] ; do
    echo -e "${YELLOW}Enter the starting number: (e.g. 1 -> nodes will start with alias mn1, mn2,...)${NC}"
    echo -e "${YELLOW} (If you leave empty and just press ENTER starting number will be set to 1)${NC}"
    read STARTNUMBER  
+
+   if [ -z "$STARTNUMBER" ]; then
+      STARTNUMBER=1
+   fi   
 done
 
 if [ -z "$STARTNUMBER" ]; then
@@ -97,9 +101,10 @@ if [ -z "$ALIASONE" ]; then
    for DIR in ls -ad -- ~/.*${NAME}*/; do
       if [ -d "$DIR" ]; then
          echo "$DIR exists"
-         CONF_DIR_ONE=${DIR}
+         DIR1=$(echo "${DIR::-1}")
+         CONF_DIR_ONE=${DIR1}
          echo "CONF_DIR_ONE=$CONF_DIR_ONE"
-         CONF_DIR_ONE_TMP="${DIR}_tmp"
+         CONF_DIR_ONE_TMP="${DIR1}_tmp"
          echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"    
          break  
       fi
@@ -108,9 +113,10 @@ else
    for DIR in ls -ad -- ~/.*${NAME}_${ALIASONE}*/; do
       if [ -d "$DIR" ]; then
          echo "$DIR exists"
-         CONF_DIR_ONE=${DIR}
+         DIR1=$(echo "${DIR::-1}")
+         CONF_DIR_ONE=${DIR1}
          echo "CONF_DIR_ONE=$CONF_DIR_ONE"
-         CONF_DIR_ONE_TMP="${DIR}_tmp"
+         CONF_DIR_ONE_TMP="${DIR1}_tmp"
          echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"    
          break  
       fi
@@ -137,7 +143,8 @@ echo '#!/bin/bash' > ~/bin/${NAME}-cli_$ALIASONE.sh
 echo "${NAME}-cli -conf=$CONF_DIR_ONE/${NAME}.conf -datadir=$CONF_DIR_ONE "'$*' >> ~/bin/${NAME}-cli_$ALIASONE.sh
 chmod 755 ~/bin/${NAME}*.sh
 
-PID=`ps -ef | grep -i $CONF_DIR_ONE_TMP | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+PID=`ps -ef | grep -i $CONF_DIR_ONE | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+echo "PID=$PID"
 
 if [ -z "$PID" ]; then
    echo ""
@@ -147,8 +154,11 @@ else
    sleep 1
 fi
 
+if [ -d "$CONF_DIR_ONE_TMP" ]; then
+   rm -R $CONF_DIR_ONE_TMP
+fi
+
 # create temp folder for blockchain
-rm -R $CONF_DIR_ONE_TMP
 mkdir -p $CONF_DIR_ONE_TMP
 cp -R $CONF_DIR_ONE/* $CONF_DIR_ONE_TMP/
 rm -R $CONF_DIR_ONE_TMP/${NAME}.conf
@@ -200,7 +210,7 @@ do
 	  
          if [ -d "$CONF_DIR" ]; then
             echo -e "${RED}$ALIAS is already used. $CONF_DIR already exists!${NC}"
-            EXIT='YES'
+            STARTNUMBER=$[STARTNUMBER + 1]
          else
             # OK !!!
             break
@@ -280,7 +290,8 @@ do
  
    # generate private key for MN
    if [ -z "$PRIVKEY" ]; then
-	   PID=`ps -ef | grep -i $CONF_DIR_ONE_TMP | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+	   PID=`ps -ef | grep -i $CONF_DIR_ONE | grep -i ${NAME}d | grep -v grep | awk '{print $2}'`
+      echo "PID=$PID"
 	
 	   if [ -z "$PID" ]; then
          # start wallet
