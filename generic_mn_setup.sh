@@ -275,6 +275,13 @@ do
    #Extract addnode lines 
    grep "addnode" $CONF_DIR_ONE/${NAME}.conf >> ${NAME}.conf_TEMP
 
+   #Extract original port
+   ORIGINAL_PORT=$(cat $CONF_DIR_ONE/${NAME}.conf | grep "port" | grep -v rpc)
+   ORIGINAL_PORT=$(echo $ORIGINAL_PORT | cut -f2 -d"=")
+
+   #Extract externalip lines 
+   grep "externalip" $CONF_DIR_ONE/${NAME}.conf >> ${NAME}.conf_TEMP
+
    echo "" >> ${NAME}.conf_TEMP
    echo "port=$PORT" >> ${NAME}.conf_TEMP
   
@@ -368,7 +375,7 @@ do
       fi	       
    done 
 
-   MNCONFIG=$(echo $ALIAS $IP:$PORT $PRIVKEY "txhash" "outputidx")
+   MNCONFIG=$(echo $ALIAS $IP:$ORIGINAL_PORT $PRIVKEY "txhash" "outputidx")
    echo $MNCONFIG >> ~/bin/masternode_config.txt
     
    COUNTER=$[COUNTER + 1]
