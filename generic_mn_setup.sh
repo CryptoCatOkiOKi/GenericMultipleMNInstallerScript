@@ -47,7 +47,9 @@ re='^[0-9]+$'
 
 echo ""
 echo -e "${YELLOW}Enter coin name:${NC}"
-read NAME 
+read NAME
+
+NAME=${NAME,,}  
 
 while ! [[ $MNCOUNT =~ $re ]] ; do
    echo ""
@@ -96,9 +98,17 @@ echo -e "${YELLOW}Enter blockchain wallet alias for copying chain to new wallets
 echo -e "${YELLOW} (Leave empty and just press ENTER if there is no alias or you don't know the alias)${NC}"
 read ALIASONE
 
+if [ $NAME == 'deviant' ]; then
+   NAME1="DeviantCore"
+if [ $NAME == 'opcx' ]; then
+   NAME1="OPCoinX"   
+else
+   NAME1=NAME
+fi
+
 # check CONF DIRS
 if [ -z "$ALIASONE" ]; then
-   for DIR in ls -ad -- ~/.*${NAME}*/; do
+   for DIR in ls -ad -- ~/.*${NAME1}*/; do
       if [ -d "$DIR" ]; then
          echo "$DIR exists"
          DIR1=$(echo "${DIR::-1}")
@@ -110,7 +120,7 @@ if [ -z "$ALIASONE" ]; then
       fi
    done
 else
-   for DIR in ls -ad -- ~/.*${NAME}_${ALIASONE}*/; do
+   for DIR in ls -ad -- ~/.*${NAME1}_${ALIASONE}*/; do
       if [ -d "$DIR" ]; then
          echo "$DIR exists"
          DIR1=$(echo "${DIR::-1}")
