@@ -171,18 +171,19 @@ fi
 # create temp folder for blockchain
 mkdir -p $CONF_DIR_ONE_TMP
 cp -R $CONF_DIR_ONE/* $CONF_DIR_ONE_TMP/
-rm -R $CONF_DIR_ONE_TMP/${NAME}.conf
-rm -R $CONF_DIR_ONE_TMP/debug.log
-rm -R $CONF_DIR_ONE_TMP/wallet.dat
-rm -R $CONF_DIR_ONE_TMP/backups
-rm -R $CONF_DIR_ONE_TMP/mnpayments.dat
-rm -R $CONF_DIR_ONE_TMP/mncache.dat
-rm -R $CONF_DIR_ONE_TMP/masternode.conf
-rm -R $CONF_DIR_ONE_TMP/fee_estimates.dat
-rm -R $CONF_DIR_ONE_TMP/db.log
-rm -R $CONF_DIR_ONE_TMP/communityvote.dat
-rm -R $CONF_DIR_ONE_TMP/budget.dat
-rm -R $CONF_DIR_ONE_TMP/banlist.dat
+rm -R $CONF_DIR_ONE_TMP/${NAME}.conf &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/${NAME1}.conf &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/debug.log &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/wallet.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/backups &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/mnpayments.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/mncache.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/masternode.conf &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/fee_estimates.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/db.log &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/communityvote.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/budget.dat &>/dev/null &
+rm -R $CONF_DIR_ONE_TMP/banlist.dat &>/dev/null &
 
 # start wallet
 sh ~/bin/${NAME}d_$ALIASONE.sh
@@ -303,7 +304,8 @@ do
    fi
 
    sudo ufw allow $PORT/tcp
-   mv ${NAME}.conf_TEMP $CONF_DIR/${NAME}.conf
+   cp ${NAME}.conf_TEMP $CONF_DIR/${NAME}.conf
+   cp ${NAME}.conf_TEMP $CONF_DIR/${NAME1}.conf
  
    # generate private key for MN
    if [ -z "$PRIVKEY" ]; then
