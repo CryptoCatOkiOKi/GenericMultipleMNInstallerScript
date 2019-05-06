@@ -100,11 +100,11 @@ read ALIASONE
 
 # if [ $NAME == 'deviant' ]; then
 #    NAME1="DeviantCore"
-# elif  [ $NAME == 'opcx' ]; then
-#    NAME1="OPCoinX"   
-# else
+if  [ $NAME == 'opcx' ]; then
+   NAME1="OPCoinX"   
+else
    NAME1=${NAME}
-#fi
+fi
 
 # check CONF DIRS
 if [ -z "$ALIASONE" ]; then
