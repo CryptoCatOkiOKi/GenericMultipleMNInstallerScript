@@ -103,7 +103,7 @@ if [ $NAME == 'deviant' ]; then
 elif  [ $NAME == 'opcx' ]; then
    NAME1="OPCoinX"   
 else
-   NAME1=${NAME1}
+   NAME1=${NAME}
 fi
 
 # check CONF DIRS
