@@ -98,13 +98,13 @@ echo -e "${YELLOW}Enter blockchain wallet alias for copying chain to new wallets
 echo -e "${YELLOW} (Leave empty and just press ENTER if there is no alias or you don't know the alias)${NC}"
 read ALIASONE
 
-if [ $NAME == 'deviant' ]; then
-   NAME1="DeviantCore"
-elif  [ $NAME == 'opcx' ]; then
-   NAME1="OPCoinX"   
-else
+# if [ $NAME == 'deviant' ]; then
+#    NAME1="DeviantCore"
+# elif  [ $NAME == 'opcx' ]; then
+#    NAME1="OPCoinX"   
+# else
    NAME1=${NAME}
-fi
+#fi
 
 # check CONF DIRS
 if [ -z "$ALIASONE" ]; then
@@ -131,6 +131,28 @@ else
          break  
       fi
    done   
+fi
+
+if [ ! -d "$CONF_DIR_ONE" ]; then
+  # Control will enter here if $DIRECTORY doesn't exist.
+   for DIR in $(find "$PWD" -name ${NAME1}.conf); do
+      echo "$DIR"
+      DIR1=${DIR%/${NAME1}.conf*}
+      echo "$DIR1"
+      if [ -d "$DIR1" ]; then
+         echo "$DIR1 exists"
+         CONF_DIR_ONE=${DIR1}
+         echo "CONF_DIR_ONE=$CONF_DIR_ONE"
+         CONF_DIR_ONE_TMP="${DIR1}_tmp"
+         echo "CONF_DIR_ONE_TMP=$CONF_DIR_ONE_TMP"    
+         break  
+      fi
+   done
+fi
+
+if [ ! -d "$CONF_DIR_ONE" ]; then
+   echo -e "${RED}ERROR: ${CONF_DIR_ONE} not exists!${NC}"
+   exit 1
 fi
 
 if [ -z "$CONF_DIR_ONE_TMP" ]; then
