@@ -100,7 +100,7 @@ read ALIASONE
 
 if [ $NAME == 'deviant' ]; then
    NAME1="DeviantCore"
-if [ $NAME == 'opcx' ]; then
+elif  [ $NAME == 'opcx' ]; then
    NAME1="OPCoinX"   
 else
    NAME1=NAME
