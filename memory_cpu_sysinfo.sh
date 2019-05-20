@@ -35,8 +35,21 @@ for PID in `ps -ef | grep -i ${COIN} | grep daemon | grep conf | grep -v grep | 
    COUNTER=$[COUNTER + 1]
 done
 echo "----------------------------------------"
+
+if [ $COUNTER == 0 ]
+then
+   COUNTER=1
+fi
+
 echo "TOTALNODES=${COUNTER}"
 echo "TOTALMEM=${TOTALMEM} Kb"
+
+if [ -z "$NUMBOFCPUCORES" ]; then
+   NUMBOFCPUCORES=1
+elif  [ $COUNTER == 0 ]; then
+   NUMBOFCPUCORES=1
+fi
+
 echo "TOTALMEM=${NUMBOFCPUCORES}"
 
 TOTALCPU=$(echo "${TOTALCPU} / ${NUMBOFCPUCORES}" |bc)
@@ -46,6 +59,11 @@ TOTALMEMMB=$(expr ${TOTALMEM} / 1024)
 echo "TOTALMEMMB=${TOTALMEMMB} Mb"
 
 AVERAGEMEMMB=$(expr ${TOTALMEMMB} / ${COUNTER})
+
+if [ -z "$AVERAGEMEMMB" ]; then
+   AVERAGEMEMMB=500
+fi
+
 echo "AVERAGEMEMMB=${AVERAGEMEMMB} Mb"
 
 AVERAGECPU=$(echo "${TOTALCPU} / ${COUNTER}" |bc -l)
@@ -58,5 +76,7 @@ FREEMEMMB=$(free -m | grep Mem | awk '{printf "%d\n", $4}')
 echo "FREEMEMMB=${FREEMEMMB} Mb"
 NUMOFFREENODESMEM=$(expr ${FREEMEMMB} / ${AVERAGEMEMMB})
 NUMOFFREENODESCPU=$(echo "100 / ${AVERAGECPU}" | bc)
+
+### RESULT ###
 echo -e "${YELLOW}Based on free memory, this server can host approx. ${RED}${NUMOFFREENODESMEM}${NC} additional nodes"
 echo -e "${YELLOW}Based on free CPU, this server can host approx. ${RED}${NUMOFFREENODESCPU}${NC} additional nodes"
