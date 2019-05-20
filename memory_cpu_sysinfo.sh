@@ -18,31 +18,31 @@ if [ -z "$COIN" ]; then
    COIN="daemon"
 fi
 
-echo "COIN=${COIN}"
+# echo "COIN=${COIN}"
+clear
+echo -e "${BLUE}*** Calculating, please wait ...${NC}"
+echo -e "${BLUE}---------------------------------------------------${NC}"
 
 for PID in `ps -ef | grep -i ${COIN} | grep daemon | grep conf | grep -v grep | awk '{printf "%d\n", $2}'`; do
-   echo "PID=${PID}"
+   # echo "PID=${PID}"
    PIDMEM=$(cat /proc/${PID}/status |grep VmRSS | awk '{printf "%d\n", $2}')
-   echo "PIDMEM=${PIDMEM}"
-   # TOTALMEM=$[TOTALMEM + PIDMEM]
+   # echo "PIDMEM=${PIDMEM}"
    TOTALMEM=$(expr ${TOTALMEM} + ${PIDMEM})
 
    PIDCPU=$(echo `ps -p ${PID} -o %cpu | grep -v CPU |awk '{printf "%0.2f\n", $1}'`)
-   echo "PIDCPU=${PIDCPU}"
-   # TOTALCPU=$(expr ${TOTALCPU} + ${PIDCPU})
+   # echo "PIDCPU=${PIDCPU}"
    TOTALCPU=$(echo "${TOTALCPU} + ${PIDCPU}" | bc)
 
    COUNTER=$[COUNTER + 1]
 done
-echo "----------------------------------------"
 
 if [ $COUNTER == 0 ]
 then
    COUNTER=1
 fi
 
-echo "TOTALNODES=${COUNTER}"
-echo "TOTALMEM=${TOTALMEM} Kb"
+echo -e "${GREEN}Number of nodes ${COUNTER}"
+#echo "Total memory used ${TOTALMEM} Kb"
 
 if [ -z "$NUMBOFCPUCORES" ]; then
    NUMBOFCPUCORES=1
@@ -50,13 +50,13 @@ elif  [ $COUNTER == 0 ]; then
    NUMBOFCPUCORES=1
 fi
 
-echo "TOTALMEM=${NUMBOFCPUCORES}"
+# echo "NUMBOFCPUCORES=${NUMBOFCPUCORES}"
 
 TOTALCPU=$(echo "${TOTALCPU} / ${NUMBOFCPUCORES}" |bc)
-echo "TOTALCPU=${TOTALCPU}%"
+echo -e "${GREEN}Total CPU% used ${TOTALCPU}%${NC}"
 
 TOTALMEMMB=$(expr ${TOTALMEM} / 1024)
-echo "TOTALMEMMB=${TOTALMEMMB} Mb"
+# echo "Total memory used ${TOTALMEMMB} Mb"
 
 AVERAGEMEMMB=$(expr ${TOTALMEMMB} / ${COUNTER})
 
@@ -64,19 +64,21 @@ if [ -z "$AVERAGEMEMMB" ]; then
    AVERAGEMEMMB=500
 fi
 
-echo "AVERAGEMEMMB=${AVERAGEMEMMB} Mb"
-
 AVERAGECPU=$(echo "${TOTALCPU} / ${COUNTER}" |bc -l)
-echo "AVERAGECPU=${AVERAGECPU}% per node"
+echo -e "${GREEN}Average CPU used ${AVERAGECPU}% per node${NC}"
 
 TOTALMEMGB=$(expr ${TOTALMEMMB} / 1024)
-echo "TOTALMEMGB=${TOTALMEMGB} Gb"
+echo -e "${GREEN}Total memory used ${TOTALMEMGB} Gb${NC}"
+
+echo -e "${GREEN}Average memory used ${AVERAGEMEMMB} Mb per node${NC}"
 
 FREEMEMMB=$(free -m | grep Mem | awk '{printf "%d\n", $4}')
-echo "FREEMEMMB=${FREEMEMMB} Mb"
+echo -e "${GREEN}Free memory ${FREEMEMMB} Mb${NC}"
 NUMOFFREENODESMEM=$(expr ${FREEMEMMB} / ${AVERAGEMEMMB})
 NUMOFFREENODESCPU=$(echo "100 / ${AVERAGECPU}" | bc)
 
 ### RESULT ###
-echo -e "${YELLOW}Based on free memory, this server can host approx. ${RED}${NUMOFFREENODESMEM}${NC} additional nodes"
-echo -e "${YELLOW}Based on free CPU, this server can host approx. ${RED}${NUMOFFREENODESCPU}${NC} additional nodes"
+echo ""
+echo -e "${YELLOW}Based on free memory, this server can host approx. ${RED}${NUMOFFREENODESMEM}${NC} ${YELLOW}additional nodes${NC}"
+echo -e "${YELLOW}Based on free CPU, this server can host approx. ${RED}${NUMOFFREENODESCPU}${NC} ${YELLOW}additional nodes${NC}"
+echo -e "${PURPLE}###All data is for informational purposes only and may be inaccurate!###${NC}"
