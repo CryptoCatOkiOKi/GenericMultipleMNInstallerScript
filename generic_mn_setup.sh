@@ -301,7 +301,7 @@ do
    chmod 755 ~/bin/${NAME}*.sh
 
    mkdir -p $CONF_DIR
-   echo "rpcuser=user"`shuf -i 100000-10000000 -n 1` >> ${NAME}.conf_TEMP
+   echo "rpcuser=user"`shuf -i 100000-10000000 -n 1` > ${NAME}.conf_TEMP
    echo "rpcpassword=pass"`shuf -i 100000-10000000 -n 1` >> ${NAME}.conf_TEMP
    echo "rpcallowip=127.0.0.1" >> ${NAME}.conf_TEMP
    echo "rpcport=$RPCPORT" >> ${NAME}.conf_TEMP
