@@ -317,6 +317,7 @@ do
    #Extract original port
    ORIGINAL_PORT=$(cat $CONF_DIR_ONE/${NAME}.conf | grep "port" | grep -v rpc)
    ORIGINAL_PORT=$(echo $ORIGINAL_PORT | cut -f2 -d"=")
+   DEFAULT_MN_PORT=$(cat $CONF_DIR_ONE/masternode.conf | grep Example | cut -f3 -d":" | cut -f1 -d" ")
 
    #Extract externalip lines 
    grep "externalip" $CONF_DIR_ONE/${NAME}.conf >> ${NAME}.conf_TEMP
@@ -414,6 +415,13 @@ do
          break
       fi	       
    done 
+
+   # if default port is not defined use original port
+   if [ -z "$DEFAULT_MN_PORT" ]; then
+      MNCONFIG=$(echo $ALIAS $IP:$ORIGINAL_PORT $PRIVKEY "txhash" "outputidx")
+   else
+      MNCONFIG=$(echo $ALIAS $IP:$DEFAULT_MN_PORT $PRIVKEY "txhash" "outputidx")
+   fi   
 
    MNCONFIG=$(echo $ALIAS $IP:$ORIGINAL_PORT $PRIVKEY "txhash" "outputidx")
    echo $MNCONFIG >> ~/bin/masternode_config.txt
